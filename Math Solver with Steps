@@ -288,12 +288,9 @@ public class Buttons {
 
 }
 ------------------------------------------------------------------------------------------------------------
-import javafx.scene.shape.Circle;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.xml.soap.Text;
 
 public class TabbedPaneMaker extends JPanel {
     public TabbedPaneMaker() {
