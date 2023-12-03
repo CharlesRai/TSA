@@ -1,30 +1,37 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
+
+    List<User> users = new ArrayList<>();
+
     Scanner scanner = new Scanner(System.in);
     String input = scanner.nextLine();
 
-    ArrayList<User> users = new ArrayList<User>();
 
     public static void main(String[] args) {
+//        Main m = new Main();
+//        m.makeUser();
+
+        MainGUI gui = new MainGUI();
+        gui.createAndShowGUI();
 
     }
 
     public void solveMath(){
         MathOps operation = new MathOps();
         input = scanner.nextLine();
-        operation.simplifyProblem(input);
+//        operation.simplifyProblem(input);
 
         // If system of equation make new operation and solve the two
-        // If ineqaulities pass less and greater than signs, Finding asymptotes and checking vales in between them
+        // If inequalities pass less and greater than signs, Finding asymptotes and checking vales in between them
 
     }
 
-    private void makeUser() {
+    public void makeUser() {
 
         //makes new User
         User user = new User();
+
         System.out.println("Username: ");
         input = scanner.nextLine();
 
@@ -39,14 +46,15 @@ public class Main {
         addUser(user);
     }
 
-    private void addUser(User newUser){
+    private void addUser(User user){
         // adds a new user to an Arraylist
-        users.add(newUser);
-        newUser.setUserIndex(users.size() - 1);
+
+         users.add(user);
+        user.setUserIndex(users.size() - 1);
     }
 
-    private void printUserInfo(User user){
-        System.out.println(user.getUserIndex());
+    private void printUserInfo(User User){
+        System.out.println(User.getUserIndex());
     }
 }
 
@@ -89,19 +97,245 @@ public class User {
     }
 }
 ------------------------------------------------------------------------------------------------------------
-public class MathOps {
+import javax.swing.*;
 
+class MathOps {
 
     public void answer(String question){
 
     }
 
-    public String simplifyProblem(String question){
-        //re write problem using key terms such as Frac(Numerator,Denominator), sqrt(number), cbrt(number),
-        //add(x,y), subtract(x,y),abs(number), integrate(), differentiate(), areaCirc(radius), areaNgon(n, radius),
-        //volNhedron(n, radius), volSph(radius), cos(x), sin(x), tan(x), aCos(x), aSin(x), aTan(x), inEqu(String, String)
+    public String steps(String question, JTextArea answer){
+        boolean unanswered = true;
+        int n = 0;
+        while (true){
+//            answer.append("Step " + n + ": " + String.valueOf() + "\n\r");
+
+            n++;
+        }
     }
 
-    public String steps()
+    private double sqrt(int number){
+       return Math.sqrt(number);
+    }
+
+    private double cbrt(int number){
+        return Math.cbrt(number);
+    }
+
+    private int abs(int number){
+
+        return Math.abs(number);
+    }
+
+    private double areaCirc(int radius, boolean pi){
+        //pi true mean not in terms of pi
+        double area;
+        if(pi) {
+            area = Math.PI * radius * radius;
+        } else {
+            area = radius * radius;
+        }
+
+        return area;
+    }
+
+    private double areaNgon(int n, int radius){
+        int theta = (n - 2) * 180 / n;
+        int thirdAngle = 180 - (theta * 2);
+
+        double thirdSide = (Math.sin(thirdAngle) * radius) / Math.sin(theta);
+        double triArea = Math.sin(theta) * radius * thirdSide;
+
+        return triArea * n;
+    }
+
+    private double volSph(int radius, boolean pi){
+        //pi true mean not in terms of pi
+        double vol;
+        if (pi){
+            vol = 4/3 * Math.PI * radius * radius * radius;
+        } else {
+            vol = 4/3 * radius * radius * radius;
+        }
+        return vol;
+    }
+
+    private double cos(int radians){
+        return Math.cos(radians);
+    }
+
+    private double sin(int radians){
+        return Math.sin(radians);
+    }
+
+    private double tan(int radians){
+        return Math.tan(radians);
+    }
+
+    private double acos(int radians){
+        return Math.acos(radians);
+    }
+
+    private double asin(int radians){
+        return Math.asin(radians);
+    }
+
+    private double atan(int radians){
+        return Math.atan(radians);
+    }
+
+//    private String differentiate(String operation){
+//
+//
+//    }
+//
+//    private String integrate(String operation){
+//
+//
+//    }
 
 }
+------------------------------------------------------------------------------------------------------------
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class MainGUI {
+    JTextField problem;
+    JTextArea answer;
+    Buttons button = new Buttons();
+    JFrame frame = new JFrame("Calculator");
+    JPanel pane = new JPanel();
+    String prob;
+
+
+    public void createAndShowGUI(){
+//        answer.setEnabled(false);
+        // closes program when frame is x'd out
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Adds two tabs for forum and Solver at top
+        frame.add(new TabbedPaneMaker(), BorderLayout.BEFORE_FIRST_LINE);
+
+        frame.setBounds(0,0,300,300);
+        button.initializeButton(pane);
+        frame.add(pane);
+
+        //Display the window.
+        frame.setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent event, Container pane) {
+        MathOps mathOps = new MathOps();
+        String currentTab;
+        if (event.getSource() == button.getButton( "Solve")){
+            System.out.println("Hello");
+            prob = problem.getText();
+            mathOps.steps(prob, answer);
+        }
+    }
+
+    public static void main(String[] args) {
+        
+    }
+}
+------------------------------------------------------------------------------------------------------------
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Buttons {
+    JButton button = new JButton("Solve");
+    JButton button1 = new JButton("Fraction");
+    public void initializeButton(Container pane){
+
+
+        button1.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        pane.add(button1);
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        button1.setName("Fraction");
+
+
+
+        button.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+
+        pane.add(button);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        button.setName("Solve");
+
+
+    }
+
+    public JButton getButton(String buttonName){
+
+        if(button.getName() == buttonName){
+            return (JButton) button;
+        }
+        return null;
+    }
+
+}
+------------------------------------------------------------------------------------------------------------
+import javafx.scene.shape.Circle;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.xml.soap.Text;
+
+public class TabbedPaneMaker extends JPanel {
+    public TabbedPaneMaker() {
+        super(new GridLayout(1, 1));
+        JTabbedPane tabbedPane = new JTabbedPane();
+        JTabbedPane innerTabbedPane = new JTabbedPane();
+        JTabbedPane innerTwoTabbedPane = new JTabbedPane();
+
+
+        JTextField problem = new JTextField("Enter Problem here: ");
+        JTextField circle = new JTextField("Radius: ");
+        JTextField n = new JTextField("Side Count: ");
+        JTextField s = new JTextField("Side Length: ");
+        JTextField sphere = new JTextField("Radius: ");
+
+        tabbedPane.addTab("Solver",problem);
+        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        tabbedPane.addTab("Area", innerTabbedPane);
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+        innerTabbedPane.addTab("Circle", circle);
+        innerTabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        innerTabbedPane.addTab("N-Gon", innerTwoTabbedPane);
+        innerTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+        innerTwoTabbedPane.addTab("Number of Sides", n);
+        innerTwoTabbedPane.addTab("Side Length", s);
+
+        //Add the tabbed pane to this panel.
+        add(tabbedPane);
+
+    }
+
+    protected JComponent makeTextPanel(String text) {
+        JPanel panel = new JPanel(false);
+        JLabel filler = new JLabel(text);
+        filler.setHorizontalAlignment(JLabel.CENTER);
+        panel.setLayout(new GridLayout(2, 1));
+        panel.add(filler);
+        return panel;
+    }
+}
+------------------------------------------------------------------------------------------------------------
