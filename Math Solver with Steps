@@ -200,6 +200,8 @@ class MathOps {
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class MainGUI {
     JTextField problem;
@@ -207,6 +209,9 @@ public class MainGUI {
     Buttons button = new Buttons();
     JFrame frame = new JFrame("Calculator");
     JPanel pane = new JPanel();
+    TabbedPaneMaker tab = new TabbedPaneMaker();
+    JTabbedPane tabbedPane = new JTabbedPane();
+    MathOps mathOps = new MathOps();
     String prob;
 
 
@@ -220,24 +225,37 @@ public class MainGUI {
 
         frame.setBounds(0,0,300,300);
         button.initializeButton(pane);
-        frame.add(pane);
+        final int[] currentTab = {0};
+        final String[] currentProblem = new String[1];
 
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+              currentTab[0] = tabbedPane.getSelectedIndex();
+              currentProblem[0] = problem.getText();
+
+            }
+        });
+
+        System.out.println(currentTab);
+        System.out.println(currentProblem);
+
+        button.button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                if (event.getSource() == button.getButton( "Solve")){
+                    System.out.println("Hello");
+
+                    prob = problem.getText();
+                    System.out.println(prob);
+                    mathOps.steps(prob, answer);
+                }
+            }
+        });
+
+        frame.add(pane);
         //Display the window.
         frame.setVisible(true);
-    }
-
-    public void actionPerformed(ActionEvent event, Container pane) {
-        MathOps mathOps = new MathOps();
-        String currentTab;
-        if (event.getSource() == button.getButton( "Solve")){
-            System.out.println("Hello");
-            prob = problem.getText();
-            mathOps.steps(prob, answer);
-        }
-    }
-
-    public static void main(String[] args) {
-        
     }
 }
 ------------------------------------------------------------------------------------------------------------
@@ -292,6 +310,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+
 public class TabbedPaneMaker extends JPanel {
     public TabbedPaneMaker() {
         super(new GridLayout(1, 1));
@@ -304,9 +323,8 @@ public class TabbedPaneMaker extends JPanel {
         JTextField circle = new JTextField("Radius: ");
         JTextField n = new JTextField("Side Count: ");
         JTextField s = new JTextField("Side Length: ");
-        JTextField sphere = new JTextField("Radius: ");
 
-        tabbedPane.addTab("Solver",problem);
+        tabbedPane.addTab("Solver", problem);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         tabbedPane.addTab("Area", innerTabbedPane);
@@ -320,6 +338,7 @@ public class TabbedPaneMaker extends JPanel {
 
         innerTwoTabbedPane.addTab("Number of Sides", n);
         innerTwoTabbedPane.addTab("Side Length", s);
+
 
         //Add the tabbed pane to this panel.
         add(tabbedPane);
