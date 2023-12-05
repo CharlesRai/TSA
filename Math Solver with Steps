@@ -200,64 +200,62 @@ class MathOps {
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class MainGUI {
+    JFrame frame = new JFrame("Calculator");
+    TabbedPaneMaker tab = new TabbedPaneMaker();
+    MathOps mathOps = new MathOps();
+    Buttons button = new Buttons();
+    JPanel pane = new JPanel();
     JTextField problem;
     JTextArea answer;
-    Buttons button = new Buttons();
-    JFrame frame = new JFrame("Calculator");
-    JPanel pane = new JPanel();
-    TabbedPaneMaker tab = new TabbedPaneMaker();
-    JTabbedPane tabbedPane = new JTabbedPane();
-    MathOps mathOps = new MathOps();
     String prob;
-
-
+    
     public void createAndShowGUI(){
-//        answer.setEnabled(false);
         // closes program when frame is x'd out
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Adds two tabs for forum and Solver at top
-        frame.add(new TabbedPaneMaker(), BorderLayout.BEFORE_FIRST_LINE);
+        frame.add(tab, BorderLayout.BEFORE_FIRST_LINE);
 
         frame.setBounds(0,0,300,300);
         button.initializeButton(pane);
-        final int[] currentTab = {0};
-        final String[] currentProblem = new String[1];
-
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-              currentTab[0] = tabbedPane.getSelectedIndex();
-              currentProblem[0] = problem.getText();
-
-            }
-        });
-
-        System.out.println(currentTab);
-        System.out.println(currentProblem);
-
-        button.button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (event.getSource() == button.getButton( "Solve")){
-                    System.out.println("Hello");
-
-                    prob = problem.getText();
-                    System.out.println(prob);
-                    mathOps.steps(prob, answer);
-                }
-            }
-        });
 
         frame.add(pane);
         //Display the window.
         frame.setVisible(true);
+
+            button.getButton("Solve").addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    String currentTab = tab.getCurrentTab();
+                    String currentTab1;
+                    String currentTab2;
+                    if(currentTab.equals("Solver")){
+                        problem = tab.getProblem();
+                        prob = problem.getText();
+                    } else if(currentTab.equals("Area")){
+                        currentTab1 = tab.getCurrentTab1();
+                        if(currentTab1.equals("Circle")){
+                            problem = tab.getCircle();
+                            prob = problem.getText();
+                        } else if(currentTab1.equals("N-Gon")){
+                            currentTab2 = tab.getCurrentTab2();
+                            if (currentTab2.equals("Number of Sides")){
+                                problem = tab.getN();
+                                prob = problem.getText();
+                            } else if (currentTab2.equals("Side Length")) {
+                                problem = tab.getS();
+                                prob = problem.getText();
+                            }
+                        }
+                    }
+//                     mathOps.steps(prob, answer);
+                    System.out.println(prob);
+                }
+            });
+        }
     }
-}
+
 ------------------------------------------------------------------------------------------------------------
 import java.awt.*;
 import java.awt.event.*;
@@ -292,8 +290,6 @@ public class Buttons {
             }
         });
         button.setName("Solve");
-
-
     }
 
     public JButton getButton(String buttonName){
@@ -310,20 +306,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-
 public class TabbedPaneMaker extends JPanel {
+
+    JTextField problem = new JTextField();
+    JTextField circle = new JTextField();
+    JTextField n = new JTextField();
+    JTextField s = new JTextField();
+
+    JTabbedPane tabbedPane = new JTabbedPane();
+    JTabbedPane innerTabbedPane = new JTabbedPane();
+    JTabbedPane innerTwoTabbedPane = new JTabbedPane();
+
     public TabbedPaneMaker() {
         super(new GridLayout(1, 1));
-        JTabbedPane tabbedPane = new JTabbedPane();
-        JTabbedPane innerTabbedPane = new JTabbedPane();
-        JTabbedPane innerTwoTabbedPane = new JTabbedPane();
-
-
-        JTextField problem = new JTextField("Enter Problem here: ");
-        JTextField circle = new JTextField("Radius: ");
-        JTextField n = new JTextField("Side Count: ");
-        JTextField s = new JTextField("Side Length: ");
-
         tabbedPane.addTab("Solver", problem);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -353,5 +348,30 @@ public class TabbedPaneMaker extends JPanel {
         panel.add(filler);
         return panel;
     }
+
+    public String getCurrentTab(){
+        return tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+    }
+    public String getCurrentTab1(){
+        return innerTabbedPane.getTitleAt(innerTabbedPane.getSelectedIndex());
+    }
+    public String getCurrentTab2(){
+        return innerTwoTabbedPane.getTitleAt(innerTwoTabbedPane.getSelectedIndex());
+    }
+
+    public JTextField getProblem() {
+        return problem;
+    }
+
+    public JTextField getCircle() {
+        return circle;
+    }
+
+    public JTextField getN() {
+        return n;
+    }
+
+    public JTextField getS() {
+        return s;
+    }
 }
-------------------------------------------------------------------------------------------------------------
