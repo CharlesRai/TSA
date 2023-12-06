@@ -97,23 +97,117 @@ public class User {
     }
 }
 ------------------------------------------------------------------------------------------------------------
-import javax.swing.*;
 
 class MathOps {
 
-    public void answer(String question){
+    public String answer(String arg, String arg1, String currentTab){
+        int prob;
+        int prob1;
+        float area;
 
-    }
+        int parenthesisCount = 0;
+        String problemBite = "";
 
-    public String steps(String question, JTextArea answer){
-        boolean unanswered = true;
-        int n = 0;
-        while (true){
-//            answer.append("Step " + n + ": " + String.valueOf() + "\n\r");
+        if(currentTab.equals("N-Gon")){
+            prob = Integer.parseInt(arg);
+            prob1 = Integer.parseInt(arg1);
+            area = areaNgon(prob,prob1);
 
-            n++;
+            return String.valueOf(area);
+        } else if(currentTab.equals("Circle")){
+            prob = Integer.parseInt(arg);
+
+            return areaCirc(prob);
+        } else if (currentTab.equals("Solver")) {
+            arg = "(" + arg + ")";
+            for (int i = 0; i < arg.length(); i++) {
+                if(arg.charAt(i) == '('){
+                    parenthesisCount++;
+                    problemBite += arg.charAt(i);
+                } else if (arg.charAt(i) == ')') {
+                    parenthesisCount--;
+                    //Doesn't work for functions like cos(x), tan(x), asin(x)
+
+                    problemBite += arg.charAt(i);
+                    solveProblemBite(problemBite);
+                }
+            }
+
         }
+
+        return "";
     }
+
+    public int solveProblemBite(String bite){
+        int biteAnswer = 0;
+        int plusCount = 0;
+        int minusCount = 0;
+        int multiCount = 0;
+        int diviCount = 0;
+
+        for (int i = 0; i < bite.length(); i++) {
+            if(bite.charAt(i) == '+'){
+                plusCount++;
+            } else if (bite.charAt(i) == '-') {
+                minusCount++;
+            } else if (bite.charAt(i) == '/') {
+                diviCount++;
+            } else if (bite.charAt(i) == '*') {
+                multiCount++;
+            }
+
+        }
+
+        String storeAdd[] = new String[plusCount];
+        storeAdd = bite.split("[+]");
+
+        String storeSub[] = new String[minusCount];
+        String storeMult[] = new String[multiCount];
+        String storeDivide[] = new String[diviCount];
+
+        for (int i = 0; i < storeAdd.length; i++) {
+             storeSub = storeAdd[i].split("-");
+        }
+
+
+        for (int i = 0; i < storeSub.length; i++) {
+            if(storeSub[i].contains("*")){
+                storeMult = storeSub[i].split("[*]");
+            } else if (storeSub[i].contains("/")) {
+                storeDivide = storeSub[i].split("/");
+            }
+        }
+
+        for (int i = 0; i < storeDivide.length - 1; i++) {
+            for (int j = 0; j < storeMult.length; j++) {
+                if(storeMult[j].equals(storeDivide[i] + "/" + storeDivide[i + 1])){
+                    storeMult[j] = String.valueOf(Integer.parseInt(storeDivide[i]) / Integer.parseInt(storeDivide[i + 1]));
+                }
+            }
+        }
+
+        for (int i = 0; i < storeMult.length - 1; i++) {
+            for (int j = 0; j < storeSub.length; j++) {
+                if(storeSub[j].equals(storeMult[i] + "*" + storeMult[i+ 1]))   {
+                    storeSub[j] = String.valueOf(Integer.parseInt(storeMult[i]) * Integer.parseInt(storeMult[i + 1]));
+                }
+            }
+        }
+
+        for (int i = 0; i < storeSub.length - 1; i++) {
+            for (int j = 0; j < storeAdd.length; j++) {
+                if(storeAdd[j].equals((storeSub[i] + "-" + storeSub[i + 1]))){
+                    storeAdd[j] = String.valueOf(Integer.parseInt(storeSub[i]) * Integer.parseInt(storeSub[i + 1]));
+                }
+            }
+        }
+
+        for (int i = 0; i < storeAdd.length; i++) {
+            biteAnswer += Integer.parseInt(storeAdd[i]);
+        }
+        return biteAnswer;
+    }
+
 
     private double sqrt(int number){
        return Math.sqrt(number);
@@ -128,24 +222,29 @@ class MathOps {
         return Math.abs(number);
     }
 
-    private double areaCirc(int radius, boolean pi){
+    private String areaCirc(int radius){
         //pi true mean not in terms of pi
         double area;
-        if(pi) {
+        double areaPi;
             area = Math.PI * radius * radius;
-        } else {
-            area = radius * radius;
-        }
+            areaPi = radius * radius;
+        String sArea = String.valueOf(area);
+        String sAreaPi = String.valueOf(areaPi);
 
-        return area;
+
+        return sArea + " or " + sAreaPi + " pi";
     }
 
-    private double areaNgon(int n, int radius){
-        int theta = (n - 2) * 180 / n;
-        int thirdAngle = 180 - (theta * 2);
+    private float areaNgon(float n, float s){
 
-        double thirdSide = (Math.sin(thirdAngle) * radius) / Math.sin(theta);
-        double triArea = Math.sin(theta) * radius * thirdSide;
+        float theta = (float)(((n - 2) * 180 / n) * 3.14159265358979323846264338327 / 180);
+        float thirdAngle = (float)(3.14159265358979323846264338327 - theta);
+        float thirdSide = (float)((s * Math.sin(theta/2))/Math.sin(thirdAngle));
+        float triArea = (float)(Math.sin(theta / 2) * s * thirdSide / 2);
+
+        if(n == 3){
+            triArea = s * s / 2;
+        }
 
         return triArea * n;
     }
@@ -196,6 +295,11 @@ class MathOps {
 //    }
 
 }
+//
+//
+//    }
+
+}
 ------------------------------------------------------------------------------------------------------------
 import java.awt.*;
 import java.awt.event.*;
@@ -204,13 +308,16 @@ import javax.swing.*;
 public class MainGUI {
     JFrame frame = new JFrame("Calculator");
     TabbedPaneMaker tab = new TabbedPaneMaker();
+    JTextArea answer = new JTextArea("Answer");
     MathOps mathOps = new MathOps();
     Buttons button = new Buttons();
     JPanel pane = new JPanel();
+    JPanel bottomPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
     JTextField problem;
-    JTextArea answer;
+
     String prob;
-    
+    String prob2;
+
     public void createAndShowGUI(){
         // closes program when frame is x'd out
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -218,44 +325,52 @@ public class MainGUI {
         frame.add(tab, BorderLayout.BEFORE_FIRST_LINE);
 
         frame.setBounds(0,0,300,300);
+
+        answer.setEditable(false);
+
         button.initializeButton(pane);
+        bottomPane.add(answer);
 
         frame.add(pane);
+        frame.add(bottomPane, BorderLayout.AFTER_LAST_LINE);
+
+
         //Display the window.
         frame.setVisible(true);
+
 
             button.getButton("Solve").addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     String currentTab = tab.getCurrentTab();
                     String currentTab1;
-                    String currentTab2;
+                    String cTab = null;
                     if(currentTab.equals("Solver")){
                         problem = tab.getProblem();
                         prob = problem.getText();
+                        cTab = "Solver";
                     } else if(currentTab.equals("Area")){
                         currentTab1 = tab.getCurrentTab1();
                         if(currentTab1.equals("Circle")){
                             problem = tab.getCircle();
                             prob = problem.getText();
+                            cTab = "Circle";
                         } else if(currentTab1.equals("N-Gon")){
-                            currentTab2 = tab.getCurrentTab2();
-                            if (currentTab2.equals("Number of Sides")){
                                 problem = tab.getN();
                                 prob = problem.getText();
-                            } else if (currentTab2.equals("Side Length")) {
                                 problem = tab.getS();
-                                prob = problem.getText();
-                            }
+                                prob2 = problem.getText();
+                            cTab = "N-Gon";
+
                         }
                     }
-//                     mathOps.steps(prob, answer);
-                    System.out.println(prob);
+
+                    answer.setText(mathOps.answer(prob,prob2,cTab));
+
                 }
             });
         }
     }
-
 ------------------------------------------------------------------------------------------------------------
 import java.awt.*;
 import java.awt.event.*;
@@ -265,7 +380,6 @@ public class Buttons {
     JButton button = new JButton("Solve");
     JButton button1 = new JButton("Fraction");
     public void initializeButton(Container pane){
-
 
         button1.setAlignmentY(Component.CENTER_ALIGNMENT);
 
@@ -334,10 +448,8 @@ public class TabbedPaneMaker extends JPanel {
         innerTwoTabbedPane.addTab("Number of Sides", n);
         innerTwoTabbedPane.addTab("Side Length", s);
 
-
         //Add the tabbed pane to this panel.
         add(tabbedPane);
-
     }
 
     protected JComponent makeTextPanel(String text) {
