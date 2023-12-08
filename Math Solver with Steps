@@ -387,8 +387,10 @@ class MainGUI {
     JTextField problemBox = new JTextField("");
     JTextField problem;
 
-    JLabel instructions = new JLabel("<html>Enter every set of Arguments Separately<br><br>" +
-                                          "Clear Arguments after every Solve<html>");
+    JLabel instructions = new JLabel("<html>Included Funtions:<br>" +
+            "absx, sqrtx, cbrtx, sinx, cosx, tanx, asinx, acosx, atanx<br>" +
+            "<br>Enter every set of Arguments Separately<br><br>" +
+            "Clear Arguments after every Solve<html>");
 
     String prob;
     String prob2;
